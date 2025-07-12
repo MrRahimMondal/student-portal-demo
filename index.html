@@ -1,20 +1,43 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Student Login - College Portal</title>
+  <title>Student Login</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    input { padding: 10px; margin: 10px; width: 250px; }
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    input { padding: 10px; margin: 5px; width: 250px; }
     button { padding: 10px 20px; }
+    #result { margin-top: 30px; }
   </style>
 </head>
 <body>
-  <h2>College Student Portal</h2>
-  <form action="dashboard.html" method="get">
-    <input type="text" name="regno" placeholder="Registration Number" required><br>
-    <input type="date" name="dob" required><br>
-    <button type="submit">Login</button>
-  </form>
+  <h2>Student Result Portal</h2>
+  <input type="text" id="regno" placeholder="Registration Number" required><br>
+  <input type="date" id="dob" required><br>
+  <button onclick="login()">Login</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function login() {
+      const regno = document.getElementById("regno").value.trim();
+      const dob = document.getElementById("dob").value;
+
+      const res = await fetch("https://opensheet.elk.sh/2PACX-1vTy1ZxorEEpWxbcPC406bgUGNWy0CZb5DK9Ih3CdZg3xiVNX0JECgSSJEbkgWSDA0bK5vYC1Ggqi9Wx/Sheet1");
+      const data = await res.json();
+
+      const student = data.find(s => s.RegNo === regno && s.DOB === dob);
+
+      if (student) {
+        document.getElementById("result").innerHTML = `
+          <h3>Welcome, ${student.Name}</h3>
+          <p><strong>Result:</strong> ${student.Result}</p>
+          <p><strong>Fees Status:</strong> ${student.FeesStatus}</p>
+          <a href="${student.AdmitCardLink}" target="_blank">Download Admit Card</a>
+        `;
+      } else {
+        document.getElementById("result").innerHTML = "<p style='color:red;'>Student not found or wrong credentials!</p>";
+      }
+    }
+  </script>
 </body>
 </html>
